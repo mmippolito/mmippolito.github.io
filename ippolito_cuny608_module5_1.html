@@ -1,0 +1,146 @@
+<hmtl>
+<head>
+	<title>Ippolito - CUNY Data608 - Module 5, # 1</title>
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<style>
+		table, th, td {
+			border: 1px solid black;
+			  border-collapse: collapse;
+		}
+	</style>
+</head>
+<body>
+<h3>Michael Ippolito</h3>
+<h4>CUNY Data608</h4>
+<h4>Module 5</h4>
+<hr />
+<br />
+
+<script language="javascript">
+
+// Reverse text letter by letter
+function revText(txt) {
+
+	var r = "";  // Reversed text
+	for (var i = txt.length - 1; i >= 0; i--) {
+		r += txt[i];
+	}
+	return r;
+
+}
+
+// Find the first 20 multiples of input parameter
+function findMultiples(n) {
+
+	o = "<table>\n";  // Init output
+	for (var i = 1; i <= 20; i++) {
+		if ((i % 4) == 1) {
+			o += "<tr>";
+		}
+		o += "<td>" + (n * i) + "</td>";
+		if ((i % 4) == 0) {
+			o += "</tr>\n";
+		}
+	}
+	o += "</table>\n";
+	return o;
+
+}
+
+// Get value of input textbox and send it to the revText function
+function doRev() {
+
+	var d = document.getElementById("divRev");
+	d.innerHTML = revText(document.getElementById('txtFwd').value);
+
+}
+
+// Get value of input textbox and send it to the findMultiples function
+function doMult() {
+
+	var d = document.getElementById("divMult");
+	d.innerHTML = findMultiples(document.getElementById('txtMult').value);
+
+}
+
+// Global var to store president data
+presArr = [];
+
+// Load president csv
+function loadPres() {
+
+	r = d3.csv("data/presidents.csv",
+		function(rows) {
+			return {
+				Name: rows.Name,
+				Height: +rows.Height,
+				Weight: +rows.Weight
+			};
+		}
+	).then(
+		function(rows) {
+			o = "<br />\n";
+			o += "<table>\n";
+			o += "<th>Name</th><th>Height (inches)</th><th>Weight (pounds)</th>\n";
+			for(var i = 0; i < rows.length; i++) {
+				//presArr.push(rows[i]);
+				presArr[rows[i].Name] = {Height: rows[i].Height, Weight: rows[i].Weight};
+				o += "<tr><td>" + rows[i].Name + "</td><td>" + rows[i].Height + "</td><td>" + rows[i].Weight + "</td></tr>\n";
+			}
+			o += "</table>\n";
+			var d = document.getElementById("divPres");
+			d.innerHTML = o;
+		}
+	);
+	return r;
+
+}
+
+// Return president's height and weight
+function returnPres() {
+
+	pres = document.getElementById("txtPres").value;
+	d = document.getElementById("divHtWt");
+	if (presArr[pres] != null) {
+		d.innerHTML = "<b>President:</b>&nbsp;" + pres + "<br />\n";
+		d.innerHTML += "<b>Height:</b>&nbsp;" + presArr[pres].Height + "<br />\n";
+		d.innerHTML += "<b>Weight:</b>&nbsp;" + presArr[pres].Weight + "<br />\n";
+	}
+	else if (Object.keys(presArr).length == 0) {
+		d.innerHTML = "You have to load the president's array first!";
+	}
+	else {
+		d.innerHTML = "You're ruining everything! You have to enter a valid president's name.";
+	}
+}
+
+</script>
+
+<form action="ippolito_cuny608_module5_1.html">
+<b>Enter text to reverse:&nbsp;</b><input type="text" id="txtFwd">&nbsp;<input type="button" value="Reverse" onClick="doRev();"><br />
+<br />
+<b>Reversed text:</b><br />
+<div id="divRev"></div><br />
+<br />
+<hr />
+<b>Enter number to find first 20 multiples of:&nbsp;</b><input type="text" id="txtMult">&nbsp;<input type="button" value="Find Multiples" onClick="doMult();"><br />
+<br />
+<b>Multiples:</b><br />
+<div id="divMult"></div><br />
+<br />
+<hr />
+<b>Load presidents.csv:&nbsp;</b><input type="button" value="Load" onClick="loadPres();"><br />
+<div id="divPres"></div><br />
+<br />
+<hr />
+<b>Enter president's name:&nbsp;</b><input type="text" id="txtPres">&nbsp;<input type="button" value="Find Height & Weight" onClick="returnPres();"><br />
+<br />
+<div id="divHtWt"></div><br />
+<br />
+<hr />
+
+</form>
+
+</body>
+
+</html>
